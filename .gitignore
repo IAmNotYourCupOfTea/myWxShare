@@ -5,9 +5,9 @@
 library/
 temp/
 local/
-build
-!build/jsb-link/frameworks/runtime-src/proj.android-studio/app/src/com/mxr/wwx/*
-!build/jsb-link/frameworks/runtime-src/proj.ios_mac/ios/*
+build/
+!/build/jsb-link/frameworks/runtime-src/proj.android-studio/app/src/com/mxr/wwx/*
+!/build/jsb-link/frameworks/runtime-src/proj.ios_mac/ios/*
 #/////////////////////////////////////////////////////////////////////////////
 # Logs and databases
 #/////////////////////////////////////////////////////////////////////////////
