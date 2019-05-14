@@ -87,7 +87,13 @@ export default class testCom extends cc.Component {
 
     }
 
+    /**
+     * 截取场景中某个节点
+     * @param shotSceneNode 要截取的节点
+     * @param finishCb (error, shotScenePicPath: string) => void) 完成回调 error:是否成功,shotScenePicPath:截图后图片路径
+     */
     shotScenePlus(shotSceneNode: cc.Node, finishCb: (error, shotScenePicPath: string) => void) {
+        //由于截图中要使用到mask的一些特性 所以要截图的节点不再支持含有mask组件
         if (shotSceneNode.getComponent(cc.Mask)) {
             console.warn('截屏节点中不能包含mask')
         }
@@ -95,7 +101,7 @@ export default class testCom extends cc.Component {
             console.warn('仅支持原生平台截图')
             return;
         }
-        //cc.RenderTexture
+        //使用cc.RenderTexture截图
         let saveNodeSize = shotSceneNode.getContentSize()
         let renderTexture = cc.RenderTexture.create(saveNodeSize.width, saveNodeSize.height);
 
@@ -124,15 +130,18 @@ export default class testCom extends cc.Component {
         setTimeout(() => {
             //截屏代码
             renderTexture.begin();
-            cloneShotSceneNode.position = cc.p(saveNodeSize.width / 2, saveNodeSize.height / 2) // 恢复节点位置  
+            // 恢复节点位置  截图开始会将要截图的节点移到世界坐标(0,0)处,所以截图的时候只能截到图片的图片的1/4 
+            cloneShotSceneNode.position = cc.p(saveNodeSize.width / 2, saveNodeSize.height / 2)
             cloneShotSceneNode._sgNode.visit();
             renderTexture.end();
 
             //保存截图
             let picName = this.getRomNameByDate('.png')
+            //该函数的第一个参数是绝对路径 只能传入图片的名称 保存在可写路径下 jsb.fileUtils.getWritablePath()
             renderTexture.saveToFile(picName, cc.ImageFormat.PNG, true, () => {
                 cloneShotSceneNode.destroy() //销毁临时节点
                 maskNode.destroy()
+                //图片保存的位置
                 let picPath = jsb.fileUtils.getWritablePath() + picName
                 if (jsb.fileUtils.isFileExist(picPath)) {
                     console.log('创建截屏图片成功')
